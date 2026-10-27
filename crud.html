@@ -149,58 +149,23 @@
         });
     }
 
-    // 새로고침 없이 자바스크립트로 처리
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    async function getProducts() {
+        try {
+            const response = await fetch(API_URL);
 
-        if (nameInput.value.trim() === "") {
-            alert("상품명을 입력하세요.");
-            nameInput.focus();
-            return;
-        }
-        if (categoryInput.value === "") {
-            alert("카테고리를 선택하세요.");
-            categoryInput.focus();
-            return;
-        }
-        if (priceInput.value === "") {
-            alert("가격을 입력하세요.");
-            priceInput.focus();
-            return;
-        }
-        if (stockInput.value === "") {
-            alert("재고를 입력하세요.");
-            stockInput.focus();
-            return;
-        }
+            // 상태 코드가 200~299이면 true
+            if (!response.ok) {
+                throw new Error("실패 (" + response.status + ")");
+            }
 
-        // editId가 null이면 새 상품을 추가, null이 아니면 기존 상품을 수정
-        if (editId === null) {
-            // push -> 배열 맨 뒤에 새 객체를 넣음. id는 배열의 마지막 요소의 id + 1로 설정
-        products.push({ 
-            id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
-            name: nameInput.value,
-            category: categoryInput.value,
-            price: Number(priceInput.value),
-            stock: Number(stockInput.value)
-        });
-        } else {
-            const product = products.find(function(product) {
-            return product.id === editId;
-        });
-
-        product.name = nameInput.value;
-        product.category = categoryInput.value;
-        product.price = Number(priceInput.value);
-        product.stock = Number(stockInput.value);
-
-        // 끝나면 editId를 null로 되돌리고, 버튼 글자도 Add로 되돌림
-        editId = null;
-        saveBtn.innerText = "Add";
+            // JSON을 자바스크립트 배열로 변환
+            products = await response.json();
+            render();
+        } catch (error) {
+            showMessage("실패" + error.message, "error");
+        }
     }
-        form.reset();
-        render();
-    });
+
 
     // 위와 같은 논리흐름
     function editProduct(id) {
