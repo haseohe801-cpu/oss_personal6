@@ -215,14 +215,14 @@
             let response;
 
             if (editId === null) {
-                // 새 상품을 서버에 추가
+                // 새 상품 추가
                 response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
             } else {
-                // 기존 상품을 서버에서 수정
+                // 기존 상품 서버 수정
                 response = await fetch(API_URL + "/" + editId, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -234,7 +234,7 @@
                 throw new Error("요청 실패 (" + response.status + ")");
             }
 
-            showMessage(editId === null ? "상품이 추가되었습니다." : "상품이 수정되었습니다.", "success");
+            showMessage(editId === null ? "상품 추가." : "상품이 수정.", "success");
 
             editId = null;
             saveBtn.innerText = "Add";
@@ -249,7 +249,7 @@
 
     function editProduct(id) {
         const product = products.find(function(product) {
-            return product.id === id;
+            return String(product.id) === String(id);
         });
 
         nameInput.value = product.name;
@@ -261,18 +261,31 @@
         saveBtn.innerText = "Save";
     }
 
-    function deleteProduct(id) {
-        // 팝업창 확인 요구
+    async function deleteProduct(id) {
+
         if (!confirm("삭제하시겠습니까?")) {
             return;
-        }  
-        products = products.filter(function(product) {
-            return product.id !== id;
-        });
-        render();
+        }
+
+        try {
+            const response = await fetch(API_URL + "/" + id, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                throw new Error("삭제 실패 (" + response.status + ")");
+            }
+
+            showMessage("상품이 삭제되었습니다.", "success");
+            await getProducts();
+        } catch (error) {
+            showMessage("삭제하지 못했습니다: " + error.message, "error");
+        }
     }
 
-render();
+    searchInput.addEventListener('input', render);
+
+    getProducts();
 </script>
 
 </body>
