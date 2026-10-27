@@ -126,7 +126,6 @@
 
         const keyword = searchInput.value.trim().toLowerCase();
 
-        // filter -> 상품명에 검색어가 포함된 상품만 골라냄 (검색어가 비어 있으면 전부 통과)
         const filtered = products.filter(function(product) {
             return product.name.toLowerCase().includes(keyword);
         });
