@@ -48,6 +48,8 @@
 <body>
 <h1>Product Management</h1>
 
+    <div id="message"></div>
+
     <form id="productForm">
         <input type="text" id="name" placeholder="상품명">
 
@@ -57,11 +59,13 @@
             <option value="Electronics">Electronics</option>
             <option value="Clothing">Clothing</option>
         </select>
-        <!-- type=number -> 숫자만 입력할 수 있는 입력창 -->
+
         <input type="number" id="price" placeholder="가격">
         <input type="number" id="stock" placeholder="재고">
         <button type="submit" id="saveBtn">Add</button>
     </form>
+
+    <input type="text" id="searchInput" placeholder="상품명 검색">
 
 <table>
     <thead>
