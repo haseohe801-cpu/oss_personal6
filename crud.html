@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Management</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        form {
+        background: #f5f5f5;
+        padding: 20px;
+        margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 8px;
+            margin-right: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .edit {
+            background: #3498db;
+            color: white;
+            border: none;
+        }
+        .delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Product Management</h1>
+
+    <form id="productForm">
+        <input type="text" id="name" placeholder="상품명">
+
+        <select id="category">
+            <option value="">카테고리 선택</option>
+            <option value="Food">Food</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+        </select>
+        <!-- type=number -> 숫자만 입력할 수 있는 입력창 -->
+        <input type="number" id="price" placeholder="가격">
+        <input type="number" id="stock" placeholder="재고">
+        <button type="submit" id="saveBtn">Add</button>
+    </form>
+
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>상품명</th>
+            <th>카테고리</th>
+            <th>가격</th>
+            <th>재고</th>
+            <th>제품관리</th>
+        </tr>
+    </thead>
+
+    <tbody id="productList">
+        <!-- 자바스크립트가 여기에 상품 줄<tr>들을 채워 넣음 -->
+    </tbody>
+
+</table>
+
+<script>
+    let products = [
+        {id: 1, name: "Keyboard", category: "Electronics", price: 30000, stock: 10},
+        {id: 2, name: "T-shirt", category: "Clothing", price: 20000, stock: 20},
+        {id: 3, name: "Ramen", category: "Food", price: 5000, stock: 50}
+    ];
+
+    // 지금 수정 중인 상품의 id를 기억하는 변수
+    // null이면 수정 중이 아니라 새 상품을 추가하는 상태, 숫자가 들어 있으면 그 상품을 수정하는 상태
+    let editId = null;
+
+    const form = document.getElementById('productForm');
+    const nameInput = document.getElementById('name');
+    const categoryInput = document.getElementById('category');
+    const priceInput = document.getElementById('price');
+    const stockInput = document.getElementById('stock');
+    const list = document.getElementById('productList');
+    const saveBtn = document.getElementById('saveBtn');
+
+
+    function render(){
+        // 표 본문을 전부 비움, 옛날 내용을 지움
+        list.innerHTML = "";
+
+        // 배열의 상품을 하나씩 꺼내서 안의 코드를 실행
+        products.forEach(function(product) { 
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>${product.price}</td>
+                <td>${product.stock}</td>
+                <td>
+                    <button class="edit" onclick="editProduct(${product.id})">수정</button>
+                    <button class="delete" onclick="deleteProduct(${product.id})">삭제</button>
+                </td>
+            `;
+
+            list.appendChild(row);
+        });
+    }
+
+    // 새로고침 없이 자바스크립트로 처리
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        if (nameInput.value.trim() === "") {
+            alert("상품명을 입력하세요.");
+            nameInput.focus();
+            return;
+        }
+        if (categoryInput.value === "") {
+            alert("카테고리를 선택하세요.");
+            categoryInput.focus();
+            return;
+        }
+        if (priceInput.value === "") {
+            alert("가격을 입력하세요.");
+            priceInput.focus();
+            return;
+        }
+        if (stockInput.value === "") {
+            alert("재고를 입력하세요.");
+            stockInput.focus();
+            return;
+        }
+
+        // editId가 null이면 새 상품을 추가, null이 아니면 기존 상품을 수정
+        if (editId === null) {
+            // push -> 배열 맨 뒤에 새 객체를 넣음. id는 배열의 마지막 요소의 id + 1로 설정
+        products.push({ 
+            id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
+            name: nameInput.value,
+            category: categoryInput.value,
+            price: Number(priceInput.value),
+            stock: Number(stockInput.value)
+        });
+        } else {
+            const product = products.find(function(product) {
+            return product.id === editId;
+        });
+
+        product.name = nameInput.value;
+        product.category = categoryInput.value;
+        product.price = Number(priceInput.value);
+        product.stock = Number(stockInput.value);
+
+        // 끝나면 editId를 null로 되돌리고, 버튼 글자도 Add로 되돌림
+        editId = null;
+        saveBtn.innerText = "Add";
+    }
+        form.reset();
+        render();
+    });
+
+    // 위와 같은 논리흐름
+    function editProduct(id) {
+        const product = products.find(function(product) {
+            return product.id === id;
+        });
+
+        nameInput.value = product.name;
+        categoryInput.value = product.category;
+        priceInput.value = product.price;
+        stockInput.value = product.stock;
+
+        editId = id;
+        saveBtn.innerText = "Save";
+    }
+
+    function deleteProduct(id) {
+        // 팝업창 확인 요구
+        if (!confirm("삭제하시겠습니까?")) {
+            return;
+        }  
+        products = products.filter(function(product) {
+            return product.id !== id;
+        });
+        render();
+    }
+
+render();
+</script>
+
+</body>
+</html>

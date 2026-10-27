@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript practice</title>
+    <style>
+        /* 글꼴 아리엘, 본문 넓이 500픽셀, 위아래 여백 50픽셀 */
+        body {
+            font-family: Arial;
+            width: 500px;
+            margin: 50px auto;
+        }
+        /* 버튼 기본 스타일*/
+        input {
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .deleteBtn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 제목, 입력 필드, 추가 버튼, 목록 -->
+    <h2>JavaScript practice</h2>
+    <input type="text" id="input">
+    <button id="addBtn">추가</button>
+    <!-- 항목 들어갈 빈 목록. 자바 스크립트가 여기에 리스트 하나하나 채워넣음 -->
+    <ul id="list"></ul>
+
+    <script>
+        // 페이지의 모든 요소가 로드된 후 실행되는 함수 -- window.onload --> 오류 방지
+        window.onload = function() {
+            const input = document.getElementById('input');
+            const addBtn = document.getElementById('addBtn');
+            const list = document.getElementById('list');
+            //  버튼 클릭? -> 아래 코드 실행해
+            addBtn.addEventListener('click', function() {
+                //  만약 아무것도 안 적고 추가 버튼 클릭? --> 경고창 뜨면서 돌아가기
+                // trim() : 문자열 앞뒤 공백 제거
+                if (input.value.trim() === "") {
+                    alert("Please enter a value.");
+                    return;
+                }
+                // li 태그를 메모리에 만듬.
+                const li = document.createElement('li');
+                li.innerText = input.value;
+                // 위와 같은 방법 써서 삭제 버튼 만들기
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = "deleteBtn";
+                deleteBtn.innerText = '삭제';
+                // 삭제 버튼 클릭? -> li 태그 삭제
+                deleteBtn.addEventListener("click", function() {
+                    li.remove();
+                });
+                // li 태그 안에 삭제 버튼 넣고, ul 태그 안에 li 태그 넣기
+                li.appendChild(deleteBtn);
+                list.appendChild(li);
+                // 입력 필드 초기화, 커서 위치 입력창으로 갖다 놓음
+                input.value = "";
+                input.focus();
+            });
+        };
+    </script>
+
+</body>
+</html>
