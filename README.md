@@ -1,5 +1,11 @@
 Deployment: GitHub URL, Vercel URL, MockAPI Endpoint URL
 
+GitHub URL_https://github.com/2026-2-OSS/assign09-c02-22300783
+
+Vercel URL_https://osspersonal6.vercel.app/
+
+MockAPI Endpoint URL_https://6ae012358e42963c8d5ed564.mockapi.io/products
+
 ///////////////////////////////////////////////////////
 
 Service: 주제, Field, CRUD 기능
